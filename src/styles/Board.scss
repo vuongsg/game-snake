@@ -1,0 +1,13 @@
+$CELL_WIDTH: 40;
+$CELL_HEIGHT: 40;
+$WHITE: #fff;
+
+.cell {
+    width: $CELL_WIDTH;
+    height: $CELL_HEIGHT;
+    background-color: $WHITE;
+
+    .target {
+        background-color: red;
+    }
+}

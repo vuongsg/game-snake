@@ -1,7 +1,7 @@
 import { Route, Router, Switch } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import './App.scss';
-import { Snake } from './components/Snake';
+import { Board } from './components/Board';
 
 function App() {
   const history = createBrowserHistory();
@@ -11,7 +11,7 @@ function App() {
       <div className="App">
 
         <Switch>
-          <Route path='/' component={Snake} />
+          <Route path='/' component={Board} />
         </Switch>
       </div>
     </Router>

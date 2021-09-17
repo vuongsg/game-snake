@@ -1,6 +1,9 @@
-import { Grid } from "@material-ui/core";
+import { Container, Grid } from "@material-ui/core";
 import React, { ReactElement, useRef } from "react";
+import { useSelector } from "react-redux";
 import { Constants } from "../constants";
+import { BoardState } from "../slices/board-slice";
+import { RootType } from "../store";
 import '../styles/Board.scss';
 
 export interface BoardParameter {
@@ -9,31 +12,26 @@ export interface BoardParameter {
 }
 
 export const Board: React.FC<BoardParameter> = (props) => {
-    let initialRowsBoard: ReactElement[] = [];
-    const rowsBoard = useRef(initialRowsBoard);
-
-    const drawBoard = () => {
-        rowsBoard.current = [];
-        const classNames = `cell-board`;
-        const rowClassNames = ``;
-
-        for (let i = 0; i < Constants.SIZE_BOARD; i++) {
-            const cells: ReactElement[] = [];
-
-            for (let k = 0; k < Constants.SIZE_BOARD; k++) {
-                const cell = React.createElement('div', {className: classNames});
-                cells.push(cell);
-            }
-
-            rowsBoard.current.push(React.createElement('div', { classNames: rowClassNames }, cells));
-        }
-    }
-
-    drawBoard();    //draw board at initialization
+    const score = (useSelector<RootType>(state => state.Board) as BoardState).score;
+    const board = (useSelector<RootType>(state => state.Board) as BoardState).board;
 
     return (
-        <Grid id='grid-board'>
-            {rowsBoard.current}
-        </Grid>
+        <Container className='main-container'>
+            <Grid item xs={12}>
+                <h1>Score: {score}</h1>
+            </Grid>
+
+            <Grid container direction='row' id='grid-board'>{
+                <Grid item lg={12}>{
+                    board.map((row, idx) =>
+                    <div className='row-board'>{
+                        row.map((col, i) =>
+                            <div className='cell-board'></div>
+                    )}</div>
+                )}
+                </Grid>
+            }
+            </Grid>
+        </Container>
     )
 }

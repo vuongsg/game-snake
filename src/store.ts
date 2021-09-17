@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import snakeSlice from "./slices/snake-slice";
+import boardSlice from "./slices/board-slice";
 
 const store = configureStore({
     reducer: {
-        Snake: snakeSlice
+        Board: boardSlice
     }
 });
 

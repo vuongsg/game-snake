@@ -1,13 +1,24 @@
-$CELL_WIDTH: 40;
-$CELL_HEIGHT: 40;
+$CELL_WIDTH: 38px;
+$CELL_HEIGHT: 38px;
 $WHITE: #fff;
+$GRAY: gray;
 
-.cell {
+#grid-board {
+    background-color: red;
+}
+
+.row-board {
+    text-align: center;
+    height: $CELL_HEIGHT;
+    width: fit-content;
+    display: flex;
+    margin: auto;
+}
+
+.cell-board {
     width: $CELL_WIDTH;
     height: $CELL_HEIGHT;
-    background-color: $WHITE;
-
-    .target {
-        background-color: red;
-    }
+    background-color: $GRAY;
+    border-color: $WHITE;
+    border: 2px solid blue;
 }

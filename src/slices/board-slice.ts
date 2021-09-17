@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Constants } from "../constants";
 
-export interface SnakeType {
+export interface BoardState {
     score: number,
     board: boolean[][]
 }
 
-const initialState: SnakeType = {
+const initialState: BoardState = {
     score: 0,
     board: Array(Constants.SIZE_BOARD)
 }
@@ -14,7 +14,7 @@ const initialState: SnakeType = {
 for (let i = 0; i < Constants.SIZE_BOARD; i++) initialState.board[i] = Array(15).fill(false);
 
 const slice = createSlice({
-    name: 'snake',
+    name: 'board',
     initialState: initialState,
     reducers: {
         

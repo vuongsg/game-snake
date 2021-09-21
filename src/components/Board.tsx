@@ -1,118 +1,145 @@
 import { Container, Grid } from "@material-ui/core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Constants } from "../constants";
-import { BoardState, Direction, enhanceScore, reset, changeDirection, changePosition, start } from "../slices/board-slice";
+import { BoardState, enhanceScore, reset } from "../slices/board-slice";
 import { RootType } from "../store";
+import { useInterval } from "../libs/utils";
 import '../styles/Board.scss';
 
+enum Direction {
+    Up = 'UP',
+    Down = 'DOWN',
+    Left = 'LEFT',
+    Right = 'RIGHT'
+}
+
+const CURRENT_POSITION = [2, 2];
+const TARGET_POSITION = [10, 10];
+
+/**
+ * Return [targetRow, targetCol]
+ * @param currentRow 
+ * @param currentCol 
+ */
+ const setTargets = (currentRow: number, currentCol: number): [number, number] => {
+    let targetRow = -1, targetCol = -1;
+
+    do {
+        targetRow = Math.floor(Math.random() * (Constants.SIZE_BOARD - 1));
+        targetCol = Math.floor(Math.random() * (Constants.SIZE_BOARD - 1));
+
+        if (targetRow === 0) targetRow = 1;
+        else if (targetRow === Constants.SIZE_BOARD - 1) targetRow = Constants.SIZE_BOARD - 2;
+
+        if (targetCol === 0) targetCol = 1;
+        else if (targetCol === Constants.SIZE_BOARD - 1) targetCol = Constants.SIZE_BOARD - 2;
+    } while (currentRow === targetRow && currentCol === targetCol);
+
+    return [targetRow, targetCol];
+}
+
+function equalArray<T>(a: T[], b: T[]): boolean {
+    const len1 = a.length, len2 = b.length;
+    if (len1 !== len2) return false;
+
+    for (let i = 0; i < len1; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+
+    return true;
+}
+
 export const Board = () => {
-    let { score, currentRow, currentCol, targetRow, targetCol, direction, isDelayed } = useSelector<RootType>(state => state.Board) as BoardState;
+    let { score } = useSelector<RootType>(state => state.Board) as BoardState;
     const dispatch = useDispatch();
     const board: number[][] = Array(Constants.SIZE_BOARD);
+    const [currentPosition, setCurrentPosition] = useState(CURRENT_POSITION);
+    const [targetPosition, setTargetPosition] = useState(TARGET_POSITION);
+    const [direction, setDirection] = useState(Direction.Down);
+    const [delay, setDelay] = useState(true);
 
-    console.log(`current row: ${currentRow}`);
-    console.log(`current col: ${currentCol}`);
-    console.log(`target row: ${targetRow}`);
-    console.log(`target col: ${targetCol}`);
+    console.log(`current row: ${currentPosition[0]}`);
+    console.log(`current col: ${currentPosition[1]}`);
+    console.log(`target row: ${targetPosition[0]}`);
+    console.log(`target col: ${targetPosition[1]}`);
     console.log(`direction: ${direction}`);
-    console.log(`delay: ${isDelayed}`);
+    console.log(`delay: ${delay}`);
 
-    const timeout = setInterval(() => {
-        if (isDelayed || direction === Direction.None) return;
+    const move = () => {
+        if (delay) return;
 
+        const pos = [...currentPosition];
         switch (direction) {
                 case Direction.Up:
-                    currentRow--;
+                    pos[0]--;
                     break;
                 case Direction.Down:
-                    currentRow++;
+                    pos[0]++;
                     break;
                 case Direction.Left:
-                    currentCol--;
+                    pos[1]--;
                     break;
                 case Direction.Right:
-                    currentCol++;
+                    pos[1]++;
                     break;
             }
 
+            setCurrentPosition([...pos]);
             checkBoardState();
-    }, 120);
+    }
+
+    useInterval(move, 120);
 
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
 
         return () => {
              document.removeEventListener('keydown',  handleKeyDown);
-             clearInterval(timeout);
         }
     }, []);
-
-    /* useEffect(() => {
-        const timeout = setInterval(() => {
-            if (isDelayed || direction === Direction.None) return;
-
-        switch (direction) {
-                case Direction.Up:
-                    if (currentRow > 0) currentRow--;
-                    break;
-                case Direction.Down:
-                    if (currentRow < Constants.SIZE_BOARD) currentRow++;
-                    break;
-                case Direction.Left:
-                    if (currentCol > 0) currentCol--;
-                    break;
-                case Direction.Right:
-                    if (currentCol < Constants.SIZE_BOARD) currentCol++;
-                    break;
-            }
-
-            checkBoardState();
-        }, 120);
-
-        return () => clearInterval(timeout);
-    }, []); */
 
     const initializeBoard = (): void => { for (let i = 0; i < Constants.SIZE_BOARD; i++) board[i] = Array(Constants.SIZE_BOARD).fill(0); }
     initializeBoard();
 
     const getCellClassName = (rowIdx: number, colIdx: number): string => {
         let className = `cell-board ${rowIdx}-${colIdx}`;
-        if (rowIdx === currentRow && colIdx === currentCol) className += ' current';
-        else if (rowIdx === targetRow && colIdx === targetCol) className += ' target';
+        if (rowIdx === currentPosition[0] && colIdx === currentPosition[1]) className += ' current';
+        else if (rowIdx === targetPosition[0] && colIdx === targetPosition[1]) className += ' target';
 
         return className;
     }
 
     const checkBoardState = () => {
-        if (currentRow >= 0 && currentRow < Constants.SIZE_BOARD && currentCol >= 0 && currentCol < Constants.SIZE_BOARD)
-            dispatch(changePosition([currentRow, currentCol]));
-
-        if (currentRow === targetRow && currentCol === targetCol) {
-            dispatch(enhanceScore([currentRow, currentCol, targetRow, targetCol]));
-        } else if (currentRow <= 0 || currentRow >= Constants.SIZE_BOARD - 1 || currentCol <= 0 || currentCol >= Constants.SIZE_BOARD - 1) {
+        if (equalArray(currentPosition, targetPosition)) {
+            dispatch(enhanceScore());
+            setTargetPosition(setTargets(currentPosition[0], currentPosition[1]));
+        } else if (currentPosition[0] <= 0 || currentPosition[0] >= Constants.SIZE_BOARD - 1 
+                                            || currentPosition[1] <= 0 || currentPosition[1] >= Constants.SIZE_BOARD - 1) {
             dispatch(reset());
+            setDelay(true);
+            setCurrentPosition(CURRENT_POSITION);
+            setTargetPosition(TARGET_POSITION);
         }
     }
 
     const handleKeyDown = (e: globalThis.KeyboardEvent): void => {
         switch (e.key) {
             case 'ArrowUp':
-                direction = Direction.Up;
+                setDirection(Direction.Up);
                 break;
             case 'ArrowDown':
-                direction = Direction.Down;
+                setDirection(Direction.Down);
                 break;
             case 'ArrowLeft':
-                direction = Direction.Left;
+                setDirection(Direction.Left);
                 break;
             case 'ArrowRight':
-                direction = Direction.Right;
+                setDirection(Direction.Right);
                 break;
         }
 
-        if (isDelayed) dispatch(start(direction));
-        else dispatch(changeDirection(direction));
+        if (delay) setDelay(false);
     }
 
 return (

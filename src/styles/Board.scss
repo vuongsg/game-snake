@@ -2,9 +2,12 @@ $CELL_WIDTH: 38px;
 $CELL_HEIGHT: 38px;
 $WHITE: #fff;
 $GRAY: gray;
+$BLACK: #000;
+$RED: red;
+$GREEN: green;
 
 #grid-board {
-    background-color: red;
+    margin: 20px 0;
 }
 
 .row-board {
@@ -19,6 +22,13 @@ $GRAY: gray;
     width: $CELL_WIDTH;
     height: $CELL_HEIGHT;
     background-color: $GRAY;
-    border-color: $WHITE;
-    border: 2px solid blue;
+    border: 1px solid $BLACK;
+}
+
+.target {
+    background-color: $RED !important;
+}
+
+.current {
+    background-color: $GREEN;
 }

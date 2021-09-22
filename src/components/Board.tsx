@@ -1,4 +1,5 @@
 import { Container, Grid } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Constants } from "../constants";
@@ -14,8 +15,22 @@ enum Direction {
     Right = 'RIGHT'
 }
 
-const CURRENT_POSITION = [2, 2];
-const TARGET_POSITION = [10, 10];
+const SNAKE_POSITION_INIT = [2, 2];
+const FOOD_POSITION_INIT = [10, 10];
+
+const useStyles = makeStyles(theme => ({
+    snake: {
+        backgroundImage: `url('${process.env.PUBLIC_URL + '/img/snake-icon.png'}')`,
+        backgroundSize: 'cover'
+    },
+    food: {
+        backgroundImage: `url('${process.env.PUBLIC_URL + '/img/food-icon.png'}')`,
+        backgroundSize: 'cover'
+    },
+    ul: {
+        listStyle: 'none'
+    }
+}));
 
 /**
  * Return [targetRow, targetCol]
@@ -51,25 +66,19 @@ function equalArray<T>(a: T[], b: T[]): boolean {
 }
 
 export const Board = () => {
-    let { score } = useSelector<RootType>(state => state.Board) as BoardState;
+    let { score, topScores } = useSelector<RootType>(state => state.Board) as BoardState;
+    const classes = useStyles();
     const dispatch = useDispatch();
     const board: number[][] = Array(Constants.SIZE_BOARD);
-    const [currentPosition, setCurrentPosition] = useState(CURRENT_POSITION);
-    const [targetPosition, setTargetPosition] = useState(TARGET_POSITION);
+    const [snake, setSnake] = useState(SNAKE_POSITION_INIT);
+    const [food, setFood] = useState(FOOD_POSITION_INIT);
     const [direction, setDirection] = useState(Direction.Down);
     const [delay, setDelay] = useState(true);
-
-    console.log(`current row: ${currentPosition[0]}`);
-    console.log(`current col: ${currentPosition[1]}`);
-    console.log(`target row: ${targetPosition[0]}`);
-    console.log(`target col: ${targetPosition[1]}`);
-    console.log(`direction: ${direction}`);
-    console.log(`delay: ${delay}`);
 
     const move = () => {
         if (delay) return;
 
-        const pos = [...currentPosition];
+        const pos = [...snake];
         switch (direction) {
                 case Direction.Up:
                     pos[0]--;
@@ -85,7 +94,7 @@ export const Board = () => {
                     break;
             }
 
-            setCurrentPosition([...pos]);
+            setSnake([...pos]);
             checkBoardState();
     }
 
@@ -104,22 +113,22 @@ export const Board = () => {
 
     const getCellClassName = (rowIdx: number, colIdx: number): string => {
         let className = `cell-board ${rowIdx}-${colIdx}`;
-        if (rowIdx === currentPosition[0] && colIdx === currentPosition[1]) className += ' current';
-        else if (rowIdx === targetPosition[0] && colIdx === targetPosition[1]) className += ' target';
+        if (equalArray([rowIdx, colIdx], snake)) className += ` ${classes.snake}`;
+        else if (equalArray([rowIdx, colIdx], food)) className += ` ${classes.food}`;
 
         return className;
     }
 
     const checkBoardState = () => {
-        if (equalArray(currentPosition, targetPosition)) {
+        if (equalArray(snake, food)) {
             dispatch(enhanceScore());
-            setTargetPosition(setTargets(currentPosition[0], currentPosition[1]));
-        } else if (currentPosition[0] <= 0 || currentPosition[0] >= Constants.SIZE_BOARD - 1 
-                                            || currentPosition[1] <= 0 || currentPosition[1] >= Constants.SIZE_BOARD - 1) {
+            setFood(setTargets(snake[0], snake[1]));
+        } else if (snake[0] <= 0 || snake[0] >= Constants.SIZE_BOARD - 1 
+                                 || snake[1] <= 0 || snake[1] >= Constants.SIZE_BOARD - 1) {
             dispatch(reset());
             setDelay(true);
-            setCurrentPosition(CURRENT_POSITION);
-            setTargetPosition(TARGET_POSITION);
+            setSnake(SNAKE_POSITION_INIT);
+            setFood(FOOD_POSITION_INIT);
         }
     }
 
@@ -144,18 +153,33 @@ export const Board = () => {
 
 return (
     <Container className='main-container'>
-        <Grid item xs={12}>
-            <h1>Score: {score}</h1>
-        </Grid>
+        <Grid container>
+            <Grid item sm={12} md={9}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <h1>Score: {score}</h1>
+                    </Grid>
 
-        <Grid item xs={12} id='grid-board'>{
-            board.map((row, rowIdx) =>
-            <div key={rowIdx} className='row-board'>{
-                row.map((cell, colIdx) => {
-                    let className = getCellClassName(rowIdx, colIdx);
-                    return <div key={colIdx} className={className} tabIndex={0}></div>
-                })}</div>
-            )}
+                    <Grid item xs={12} id='grid-board'>{
+                        board.map((row, rowIdx) =>
+                            <div key={rowIdx} className='row-board'>{
+                                row.map((cell, colIdx) => {
+                                    let className = getCellClassName(rowIdx, colIdx);
+                                    return <div key={colIdx} className={className} tabIndex={0}></div>
+                                })}
+                            </div>
+                        )}
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <Grid item sm={12} md={3}>
+                <h2>Top Scores</h2>
+                <ul className={classes.ul}>{
+                        topScores.map((s, i) => <li><h3>{i + 1}. <span style={{ color: 'gray', marginRight: 3 }}>{s}</span></h3></li>)
+                    }
+                </ul>
+            </Grid>
         </Grid>
     </Container>
 )}

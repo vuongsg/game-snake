@@ -12,16 +12,19 @@ $black: #000;
 }
 
 #section-desktop {
-    min-width: 600px !important;
-}
-
-@media screen and (max-width: 1500px) {
-    #section-desktop {
-        min-width: 200px !important;
+    min-width: 600px;
+    a { 
+        color: $white;
     }
 }
 
 a {
     text-decoration: none;
     color: $black;
+}
+
+@media screen and (max-width: 1500px) {
+    #section-desktop {
+        min-width: 200px;
+    }
 }

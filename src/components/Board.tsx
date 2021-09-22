@@ -156,7 +156,7 @@ return (
         <Grid container>
             <Grid item sm={12} md={9}>
                 <Grid container>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} style={{padding: 5}}>
                         <h1>Score: {score}</h1>
                     </Grid>
 
@@ -173,10 +173,12 @@ return (
                 </Grid>
             </Grid>
 
-            <Grid item sm={12} md={3}>
+            <Grid item sm={12} md={3} style={{padding: 5}}>
                 <h2>Top Scores</h2>
                 <ul className={classes.ul}>{
-                        topScores.map((s, i) => <li><h3>{i + 1}. <span style={{ color: 'gray', marginRight: 3 }}>{s}</span></h3></li>)
+                        topScores.map((s, i) => <li>
+                                                    <h3>{i + 1}. <span style={{ color: 'gray', marginRight: 3 }}>{s} {s > 1 ? 'goals' : 'goal'}</span>
+                                                    </h3></li>)
                     }
                 </ul>
             </Grid>

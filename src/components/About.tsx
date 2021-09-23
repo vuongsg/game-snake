@@ -24,7 +24,7 @@ export const About = (): ReactElement => {
                         message={
                             <div style={{ lineHeight: 2, paddingTop: 60, paddingBottom: 60 }}>
                                 <p>Hi everyone, I'm <span className='impo'>Vuong Nguyen</span> - creator of this page &nbsp; ^_^</p>
-                                <p>Here is the classic game. Enjoy yourselves !</p>
+                                <p>Here is the classical game. Enjoy yourselves !</p>
                                 <p>Here is list of my other wesites</p>
                                 <p>
                                     <a href='https://game-n-queens-with-vuong.netlify.app/' rel="noreferrer" target='_blank'>

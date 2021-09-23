@@ -1,5 +1,6 @@
 $CELL_SIZE: 38px;
 $CELL_SMALL_SIZE: 28px;
+$CELL_TINY_SIZE: 22px;
 $WHITE: #fff;
 $GRAY: gray;
 $BLACK: #000;
@@ -25,7 +26,7 @@ $GREEN: green;
     border: 1px solid $BLACK;
 }
 
-@media screen and (max-width: 1500px) {
+@media screen and (min-width: 481px) and (max-width: 700px) {
     .row-board {
         height: $CELL_SMALL_SIZE;
     }
@@ -33,5 +34,16 @@ $GREEN: green;
     .cell-board {
         width: $CELL_SMALL_SIZE;
         height: $CELL_SMALL_SIZE;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .row-board {
+        height: $CELL_TINY_SIZE;
+    }
+
+    .cell-board {
+        width: $CELL_TINY_SIZE;
+        height: $CELL_TINY_SIZE;
     }
 }

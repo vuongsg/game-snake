@@ -1,5 +1,5 @@
 # Snake
-Snake, a clasic game.
+Snake, a classic game.
 
 ## Website for it
 <a href="https://game-snake-with-vuong.netlify.app/" target="_blank">https://game-snake-with-vuong.netlify.app/</a>

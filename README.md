@@ -1,7 +1,7 @@
 # Snake
 Snake, a classic game.
 
-## Website for it
+## Official website
 <a href="https://game-snake-with-vuong.netlify.app/" target="_blank">https://game-snake-with-vuong.netlify.app/</a>
 
 ## Installing
@@ -26,15 +26,3 @@ yarn start
 - ReactJS
 - Redux
 - TypeScript
-
-## Browsers support
-- Edge 16+
-- Firefox 52+
-- Chrome 57+
-- Safari 10.1+
-- Opera 44+
-- Safari on IOS 10.3+
-- Android Browser 90+
-- Opera Mobile 62+
-- Chrome for Android 90+
-- Firefox for Android 87+

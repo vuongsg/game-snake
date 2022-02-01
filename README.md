@@ -23,6 +23,7 @@ yarn start
 ```
 
 ## Technologies
-- ReactJS
+- React.js
 - Redux
+- Redux Toolkit
 - TypeScript
